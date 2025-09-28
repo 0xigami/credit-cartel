@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Credit Cartel</title>
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #ffffff; --fg: #000000; --gray: #888888; }
+    :root { --bg: #ffffff; --fg: #000000; --gray: #888888; --kb: 0px; }
     html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg); font-family: "EB Garamond", serif; }
     .page { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; box-sizing: border-box; }
     .title { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: clamp(40px, 6.8vw, 72px); letter-spacing: 0.04em; font-variant: small-caps; font-feature-settings: 'smcp' 1, 'c2sc' 1; margin: 0; }
 
     /* LOGIN FOOTER */
-    .login-footer { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-end; padding: clamp(16px, 4vw, 32px); }
+    .login-footer { position: fixed; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + var(--kb)); display: flex; justify-content: space-between; align-items: flex-end; padding: clamp(16px, 4vw, 32px); }
     .login-form { display: flex; align-items: center; font-size: clamp(16px, 2.6vw, 22px); font-variant: small-caps; font-feature-settings: 'smcp' 1, 'c2sc' 1; }
     .login-form label { margin-right: 6px; cursor: pointer; text-decoration: none; }
     .login-form label:hover { text-decoration: underline; }
-    .login-form input { border: none; border-bottom: 1px solid var(--fg); outline: none; font-family: "EB Garamond", serif; font-size: inherit; padding: 2px 4px; color: var(--fg); background: transparent; width: auto; min-width: 4ch; }
+    .login-form input { border: none; border-bottom: 1px solid var(--fg); outline: none; font-family: "EB Garamond", serif; font-size: inherit; padding: 2px 4px; color: var(--fg); background: transparent; width: auto; min-width: 7ch; max-width: 12ch; }
     .login-form input::placeholder { color: var(--gray); }
     .brand-x-login { color: #000000; text-decoration: none; font-size: clamp(16px, 2.6vw, 22px); }
     .brand-x-login:hover { text-decoration: underline; }
@@ -28,7 +28,7 @@
     .app-main { flex: 1; padding: clamp(20px, 5vw, 40px); max-width: 900px; padding-bottom: 96px; }
     .app-main h2 { font-weight: 600; margin: 24px 0 10px; font-size: clamp(18px, 2.8vw, 24px); }
     .intro { font-size: clamp(16px, 2.6vw, 22px); margin: 0 0 20px; }
-    .app-footer { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: clamp(16px, 4vw, 32px); background: transparent; }
+    .app-footer { position: fixed; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + var(--kb)); display: flex; justify-content: space-between; align-items: center; padding: clamp(16px, 4vw, 32px); background: transparent; }
     .logout { background: transparent; border: none; font: inherit; cursor: pointer; padding: 0; font-size: clamp(16px, 2.6vw, 22px); text-decoration: none; }
     .logout:hover { text-decoration: underline; }
     .footer-text { font-size: clamp(16px, 2.6vw, 22px); }
@@ -94,6 +94,24 @@
       const passwordInput = document.getElementById("passwordInput");
       const logoutBtn = document.getElementById("logoutBtn");
       const enterLabel = document.getElementById("enterLabel");
+
+      // Keep footer above mobile keyboards using the Visual Viewport API
+      function updateKbOffset() {
+        if (!window.visualViewport) return;
+        const vv = window.visualViewport;
+        // Amount of keyboard overlap = innerHeight - visual viewport height
+        const overlap = Math.max(0, window.innerHeight - vv.height);
+        document.documentElement.style.setProperty('--kb', overlap + 'px');
+      }
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', updateKbOffset);
+        visualViewport.addEventListener('scroll', updateKbOffset);
+        updateKbOffset();
+      }
+      // Ensure input is scrolled into view when focusing
+      passwordInput.addEventListener('focus', () => {
+        setTimeout(() => passwordInput.scrollIntoView({ block: 'center', behavior: 'smooth' }), 50);
+      });
 
       loginForm.addEventListener("submit", e => {
         e.preventDefault();
