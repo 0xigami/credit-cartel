@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Credit Cartel</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #ffffff; --fg: #000000; --gray: #888888; }
+    html, body { height: 100%; margin: 0; background: var(--bg); color: var(--fg); font-family: "EB Garamond", serif; }
+    .page { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; box-sizing: border-box; }
+    .title { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: clamp(40px, 6.8vw, 72px); letter-spacing: 0.04em; font-variant: small-caps; font-feature-settings: 'smcp' 1, 'c2sc' 1; margin: 0; }
+
+    /* LOGIN FOOTER */
+    .login-footer { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-end; padding: clamp(16px, 4vw, 32px); }
+    .login-form { display: flex; align-items: center; font-size: clamp(16px, 2.6vw, 22px); font-variant: small-caps; font-feature-settings: 'smcp' 1, 'c2sc' 1; }
+    .login-form label { margin-right: 6px; cursor: pointer; text-decoration: none; }
+    .login-form label:hover { text-decoration: underline; }
+    .login-form input { border: none; border-bottom: 1px solid var(--fg); outline: none; font-family: "EB Garamond", serif; font-size: inherit; padding: 2px 4px; color: var(--fg); background: transparent; width: auto; min-width: 4ch; }
+    .login-form input::placeholder { color: var(--gray); }
+    .brand-x-login { color: #000000; text-decoration: none; font-size: clamp(16px, 2.6vw, 22px); }
+    .brand-x-login:hover { text-decoration: underline; }
+
+    /* APP VIEW */
+    .app { min-height: 100dvh; display: flex; flex-direction: column; }
+    .app header { padding: clamp(20px, 5vw, 40px); padding-bottom: 0; }
+    .app .title { text-align: left; justify-content: flex-start; font-size: clamp(28px, 4.8vw, 48px); }
+    .app-main { flex: 1; padding: clamp(20px, 5vw, 40px); max-width: 900px; padding-bottom: 96px; }
+    .app-main h2 { font-weight: 600; margin: 24px 0 10px; font-size: clamp(18px, 2.8vw, 24px); }
+    .intro { font-size: clamp(16px, 2.6vw, 22px); margin: 0 0 20px; }
+    .app-footer { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: clamp(16px, 4vw, 32px); background: transparent; }
+    .logout { background: transparent; border: none; font: inherit; cursor: pointer; padding: 0; font-size: clamp(16px, 2.6vw, 22px); text-decoration: none; }
+    .logout:hover { text-decoration: underline; }
+    .footer-text { font-size: clamp(16px, 2.6vw, 22px); }
+    .brand-x-footer { color: #000000; text-decoration: none; font-size: clamp(16px, 2.6vw, 22px); }
+    .brand-x-footer:hover { text-decoration: underline; }
+
+    .associates { list-style: none; padding-left: 0; margin: 0 0 20px; font-size: clamp(16px, 2.6vw, 22px); }
+    .associates li { margin: 10px 0; }
+    .associates li::before { content: "⌖ "; margin-right: 6px; }
+    .associates a { color: #000000; text-decoration: none; }
+    .associates a:hover { text-decoration: underline; }
+
+    .signature-block { margin-top: 40px; text-align: left; }
+    .signature-block p { margin: 0; font-size: clamp(16px, 2.6vw, 22px); }
+    .signature-block img { margin-top: 10px; max-width: 64px; height: auto; }
+
+    button, input { -webkit-tap-highlight-color: transparent; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- LOGIN VIEW -->
+  <main id="loginView" class="page" aria-labelledby="siteTitle">
+    <h1 id="siteTitle" class="title">Credit Cartel</h1>
+    <footer class="login-footer">
+      <form id="loginForm" class="login-form">
+        <label for="passwordInput" id="enterLabel">Enter</label>
+        <input id="passwordInput" type="password" placeholder="Password" />
+      </form>
+      <a class="brand-x-login" href="https://x.com/creditcartel" target="_blank" rel="noopener" aria-label="Credit Cartel on X">𝕏</a>
+    </footer>
+  </main>
+
+  <!-- LOGGED-IN VIEW -->
+  <section id="contentView" class="app hidden" role="region" aria-label="Member area">
+    <header>
+      <h1 class="title">Credit Cartel</h1>
+    </header>
+    <main class="app-main">
+      <p class="intro">An expansive network driving the $300T credit market onchain with open, autonomous, verifiable infrastructure. Our hostile takeover is already underway.</p>
+      <h2>Associates</h2>
+      <ul class="associates">
+        <li><a href="https://x.com/gamiwtf" target="_blank" rel="noopener">Gami @gamiwtf</a></li>
+        <li><a href="https://x.com/pablos_innit" target="_blank" rel="noopener">Pablos @pablos_innit</a></li>
+      </ul>
+      <div class="signature-block">
+        <p>Credit where credit is due.</p>
+        <img src="https://i.imgur.com/lfOq3SI.png" alt="Signature" />
+      </div>
+    </main>
+    <footer class="app-footer">
+      <div class="footer-text"><button id="logoutBtn" class="logout" type="button">Logout</button> <span>(República de Panamá)</span></div>
+      <a class="brand-x-footer" href="https://x.com/creditcartel" target="_blank" rel="noopener" aria-label="Credit Cartel on X">𝕏</a>
+    </footer>
+  </section>
+
+  <script>
+    (function() {
+      const KEY = "cc_logged_in_v1";
+      const loginView = document.getElementById("loginView");
+      const contentView = document.getElementById("contentView");
+      const loginForm = document.getElementById("loginForm");
+      const passwordInput = document.getElementById("passwordInput");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const enterLabel = document.getElementById("enterLabel");
+
+      loginForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const val = passwordInput.value;
+        if (val === "Ballena$") {
+          sessionStorage.setItem(KEY, "1");
+          showContent();
+        } else {
+          passwordInput.value = "";
+          passwordInput.placeholder = "Incorrect";
+        }
+      });
+
+      enterLabel.addEventListener("click", () => {
+        loginForm.requestSubmit();
+      });
+
+      function showContent() { loginView.classList.add("hidden"); contentView.classList.remove("hidden"); }
+      function showLogin() { contentView.classList.add("hidden"); loginView.classList.remove("hidden"); }
+
+      if (sessionStorage.getItem(KEY) === "1") showContent(); else showLogin();
+      if (logoutBtn) logoutBtn.addEventListener("click", () => { sessionStorage.removeItem(KEY); showLogin(); });
+    })();
+  </script>
+</body>
+</html>
