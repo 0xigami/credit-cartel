@@ -1,239 +1,1050 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Credit Cartel</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Credit Cartel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   CSS VARIABLES & RESET
+   ======================================== */
+:root {
+  --bg-primary: #FFFFFF;
+  --bg-sidebar: #FAFAF8;
+  --bg-hover: #F0F0EC;
+  --bg-card: #F7F7F5;
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A46;
+  --text-muted: #8A8A82;
+  --border: #E2E2DE;
+  --border-light: #EBEBEA;
+  --accent-dim: rgba(26, 26, 26, 0.06);
+  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --sidebar-width: 260px;
+  --header-height: 56px;
+  --content-max-width: 740px;
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.35s ease;
+}
 
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    body {
-        background: #fff;
-        color: #000;
-        font-family: 'Cormorant Garamond', Georgia, serif;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
-        -webkit-font-smoothing: antialiased;
-    }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-weight: 400;
+  overflow-x: hidden;
+}
 
-    .container {
-        max-width: 480px;
-        text-align: center;
-    }
+::selection {
+  background: #1A1A1A;
+  color: #FFFFFF;
+}
 
-    h1 {
-        font-size: 1.8rem;
-        font-weight: 500;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        margin-bottom: 3rem;
-    }
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: #D0D0CC;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
 
-    p {
-        font-size: 1.15rem;
-        line-height: 1.75;
-        font-weight: 400;
-        margin-bottom: 1.5rem;
-    }
+/* ========================================
+   HEADER
+   ======================================== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
 
-    .contact-link {
-        color: #000;
-        text-decoration: underline;
-        text-underline-offset: 3px;
-        cursor: pointer;
-        font-size: 1.15rem;
-        font-family: inherit;
-    }
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
 
-    .contact-link:hover {
-        text-decoration-thickness: 2px;
-    }
+.wordmark {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  user-select: none;
+  cursor: pointer;
+}
 
-    .jurisdiction {
-        margin-top: 4rem;
-        font-size: 0.85rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1100;
+}
 
-    /* Modal overlay */
-    .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.95);
-        z-index: 10;
-        justify-content: center;
-        align-items: center;
-    }
+.hamburger .bar {
+  width: 20px;
+  height: 1.5px;
+  background: #1A1A1A;
+  margin: 4px 0;
+  transition: var(--transition-fast);
+  display: block;
+}
 
-    .overlay.active {
-        display: flex;
-    }
+.hamburger.active .bar:nth-child(1) {
+  transform: rotate(45deg) translate(4px, 4px);
+}
+.hamburger.active .bar:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(4px, -4px);
+}
 
-    .prompt-box {
-        text-align: center;
-    }
+/* ========================================
+   SIDEBAR
+   ======================================== */
+.sidebar {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--header-height));
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 900;
+  padding: 24px 0;
+  transition: transform var(--transition-medium);
+}
 
-    .prompt-box label {
-        display: block;
-        font-size: 1rem;
-        letter-spacing: 0.06em;
-        margin-bottom: 1.2rem;
-    }
+.sidebar-nav {
+  list-style: none;
+}
 
-    .prompt-box input {
-        font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: 1.1rem;
-        border: none;
-        border-bottom: 1px solid #000;
-        background: transparent;
-        padding: 0.4rem 0.2rem;
-        text-align: center;
-        outline: none;
-        width: 200px;
-        letter-spacing: 0.15em;
-    }
+.sidebar-section {
+  margin-bottom: 4px;
+}
 
-    .prompt-box .error {
-        font-size: 0.85rem;
-        margin-top: 0.8rem;
-        visibility: hidden;
-    }
+.sidebar-section-title {
+  display: block;
+  padding: 6px 24px;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 16px;
+  margin-bottom: 2px;
+  user-select: none;
+}
 
-    .prompt-box .error.show {
-        visibility: visible;
-    }
+.sidebar-section:first-child .sidebar-section-title {
+  margin-top: 0;
+}
 
-    .prompt-box .dismiss {
-        display: block;
-        margin-top: 1.5rem;
-        font-family: inherit;
-        font-size: 0.85rem;
-        color: #999;
-        cursor: pointer;
-        background: none;
-        border: none;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-    }
+.sidebar-link {
+  display: block;
+  padding: 7px 24px 7px 28px;
+  font-size: 0.845rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-decoration: none !important;
+  transition: all var(--transition-fast);
+  border-left: 2px solid transparent;
+  line-height: 1.5;
+}
 
-    /* Contact reveal */
-    .contact-reveal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        z-index: 20;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
+.sidebar-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  text-decoration: none !important;
+}
 
-    .contact-reveal.active {
-        display: flex;
-    }
+.sidebar-link.active {
+  color: var(--text-primary);
+  border-left-color: var(--text-primary);
+  background: var(--accent-dim);
+  font-weight: 500;
+  text-decoration: none !important;
+}
 
-    .contact-reveal a {
-        color: #000;
-        font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: 1.15rem;
-        text-underline-offset: 3px;
-    }
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 24px;
+}
 
-    .contact-reveal .back {
-        display: block;
-        margin-top: 2rem;
-        font-family: inherit;
-        font-size: 0.85rem;
-        color: #999;
-        cursor: pointer;
-        background: none;
-        border: none;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-    }
+/* ========================================
+   OVERLAY (mobile)
+   ======================================== */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.15);
+  z-index: 850;
+}
+
+.sidebar-overlay.visible {
+  display: block;
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.main {
+  margin-left: var(--sidebar-width);
+  padding-top: var(--header-height);
+  min-height: 100vh;
+}
+
+.content-area {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ========================================
+   SECTIONS & REVEAL ANIMATION
+   ======================================== */
+.doc-section {
+  padding-top: 32px;
+  margin-bottom: 72px;
+}
+
+.doc-section:last-child {
+  margin-bottom: 32px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+h1 {
+  font-family: var(--font-serif);
+  font-size: 2.8rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+  margin-bottom: 24px;
+}
+
+h2 {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 40px;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+h4 {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+  margin-top: 32px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+p {
+  margin-bottom: 18px;
+  color: var(--text-secondary);
+  font-size: 0.935rem;
+  line-height: 1.78;
+}
+
+.lead {
+  font-size: 1.02rem;
+  color: var(--text-primary);
+  line-height: 1.82;
+  font-weight: 300;
+}
+
+strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ========================================
+   EPIGRAPH
+   ======================================== */
+.epigraph {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin: 32px 0 40px;
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.epigraph::before {
+  content: '\201C';
+  font-family: var(--font-serif);
+  font-size: 4rem;
+  color: var(--text-muted);
+  position: absolute;
+  top: 10px;
+  left: -4px;
+  line-height: 1;
+  opacity: 0.35;
+}
+
+/* ========================================
+   APART LINE — standalone statement
+   ======================================== */
+.apart {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 36px 0;
+  padding: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ========================================
+   LISTS
+   ======================================== */
+ul.data-list {
+  list-style: none;
+  margin: 12px 0 24px;
+}
+
+ul.data-list li {
+  padding: 8px 0;
+  padding-left: 18px;
+  position: relative;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  border-bottom: 1px solid rgba(226,226,222,0.7);
+}
+
+ul.data-list li:last-child {
+  border-bottom: none;
+}
+
+ul.data-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15px;
+  width: 5px;
+  height: 5px;
+  background: var(--text-muted);
+  border-radius: 50%;
+}
+
+ul.data-list li strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ========================================
+   CALLOUT BOXES
+   ======================================== */
+.callout {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-primary);
+  padding: 20px 24px;
+  margin: 28px 0;
+  border-radius: 2px;
+}
+
+.callout p {
+  margin-bottom: 0;
+  color: var(--text-primary);
+  font-size: 0.925rem;
+  line-height: 1.75;
+}
+
+.callout p em {
+  color: var(--text-secondary);
+}
+
+/* ========================================
+   BLOCKQUOTE
+   ======================================== */
+blockquote {
+  margin: 28px 0;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-muted);
+  border-radius: 2px;
+}
+
+blockquote p {
+  margin-bottom: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.02rem;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+blockquote .attribution {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+}
+
+/* ========================================
+   CARTEL SUBSECTIONS
+   ======================================== */
+.cartel-entry {
+  margin: 28px 0;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.cartel-entry h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.cartel-entry p {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   LINKS
+   ======================================== */
+a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--text-secondary);
+}
+
+.contact-link {
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.contact-closing {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin-top: 20px;
+}
+
+/* ========================================
+   CLAIM ENTRIES (attribution)
+   ======================================== */
+.claim-list {
+  margin: 24px 0;
+}
+
+.claim-item {
+  margin-bottom: 20px;
+}
+
+.claim-item h4 {
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.claim-item p {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+.footer {
+  margin-left: var(--sidebar-width);
+  padding: 40px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+.footer-text {
+  font-family: var(--font-serif);
+  font-variant: small-caps;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .footer {
+    margin-left: 0;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .content-area {
+    padding: 36px 24px 64px;
+  }
+
+  h1 {
+    font-size: 2.1rem;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  .epigraph {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .content-area {
+    padding: 28px 16px 48px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .epigraph {
+    font-size: 1.12rem;
+  }
+}
 </style>
-
-
 </head>
 <body>
 
+<!-- ========================================
+     HEADER
+     ======================================== -->
+<header class="header">
+  <div class="header-inner">
+    <div class="wordmark" onclick="window.scrollTo({top:0,behavior:'smooth'})">Credit Cartel</div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
+</header>
 
-<div class="container">
-    <h1>Credit Cartel</h1>
-    <p>Credit precedes money. It precedes labour. It is the oldest and most enduring measure of trust between people.</p>
-    <p>As the relationship between work and value changes, so too will the systems that determine who is trusted, and with how much.</p>
-    <p>We are paying attention.</p>
-    <span class="contact-link" onclick="openPrompt()">Contact us</span>
-    <div class="jurisdiction">República de Panamá</div>
-</div>
+<!-- ========================================
+     SIDEBAR OVERLAY
+     ======================================== -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-<!-- Password overlay -->
-<div class="overlay" id="overlay">
-    <div class="prompt-box">
-        <label>Password</label>
-        <input type="password" id="passInput" autofocus onkeydown="if(event.key==='Enter')checkPass()">
-        <div class="error" id="errorMsg">Incorrect</div>
-        <button class="dismiss" onclick="closePrompt()">dismiss</button>
-    </div>
-</div>
+<!-- ========================================
+     SIDEBAR
+     ======================================== -->
+<nav class="sidebar" id="sidebar">
+  <ul class="sidebar-nav">
+    <li class="sidebar-section">
+      <span class="sidebar-section-title">Overview</span>
+      <a href="#introduction" class="sidebar-link active" data-section="introduction">Introduction</a>
+    </li>
 
-<!-- Contact reveal -->
-<div class="contact-reveal" id="contactReveal">
-    <div>
-        <a href="https://t.me/gami_vc" target="_blank">t.me/gami_vc</a>
-        <button class="back" onclick="closeContact()">close</button>
-    </div>
-</div>
+    <li class="sidebar-section">
+      <span class="sidebar-section-title">Thesis</span>
+      <a href="#credere" class="sidebar-link" data-section="credere">Credere</a>
+      <a href="#end-of-work" class="sidebar-link" data-section="end-of-work">The End of Work</a>
+      <a href="#agentic-economy" class="sidebar-link" data-section="agentic-economy">The Agentic Economy</a>
+      <a href="#credit-as-value" class="sidebar-link" data-section="credit-as-value">Credit as Value</a>
+    </li>
 
+    <li class="sidebar-section">
+      <span class="sidebar-section-title">Implications</span>
+      <a href="#attribution-problem" class="sidebar-link" data-section="attribution-problem">The Attribution Problem</a>
+      <a href="#cartels-of-trust" class="sidebar-link" data-section="cartels-of-trust">The Cartels of Trust</a>
+    </li>
+
+    <li class="sidebar-section">
+      <span class="sidebar-section-title">Intent</span>
+      <a href="#the-position" class="sidebar-link" data-section="the-position">The Position</a>
+    </li>
+
+    <div class="sidebar-divider"></div>
+
+    <li class="sidebar-section">
+      <a href="#contact" class="sidebar-link" data-section="contact">Contact</a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ========================================
+     MAIN CONTENT
+     ======================================== -->
+<main class="main">
+  <div class="content-area">
+
+    <!-- ====== 1. INTRODUCTION ====== -->
+    <section class="doc-section" id="introduction">
+      <div class="reveal">
+        <h1>CREDIT CARTEL</h1>
+        <p class="lead">Credit precedes money. It precedes labour. It is the oldest and most enduring measure of trust between people.</p>
+        <p class="lead">As the relationship between work and value changes, so too will the systems that determine who is trusted, and with how much.</p>
+        <p class="apart">We are paying attention.</p>
+      </div>
+    </section>
+
+    <!-- ====== 2. CREDERE ====== -->
+    <section class="doc-section" id="credere">
+      <div class="reveal">
+        <h2>Credere</h2>
+        <p class="subtitle">Latin: to believe, to trust, to place one&rsquo;s heart</p>
+
+        <p>The word <em>credit</em> descends from Latin <em>credere</em>&mdash;literally &ldquo;to put one&rsquo;s heart.&rdquo; The Proto-Indo-European root is <em>*kerd-dhe-</em>, a compound of <em>*kerd</em> (heart) and <em>*dhe</em> (to place). From the same root: <em>credo</em>, <em>credentials</em>, <em>credibility</em>, <em>creditworthiness</em>, <em>discredit</em>.</p>
+
+        <p>One word that has quietly colonized every domain where value is created, recognized, or circulated:</p>
+
+        <ul class="data-list">
+          <li><strong>Financial credit:</strong> the extension of purchasing power against the promise of future repayment. A bet on trustworthiness.</li>
+          <li><strong>Social credit:</strong> standing in a community. The informal ledger of favors owed and rendered.</li>
+          <li><strong>Creative credit:</strong> attribution of authorship. The recognition that a work originates with a particular mind.</li>
+          <li><strong>Credibility:</strong> the perceived reliability of a claim or a claimant.</li>
+        </ul>
+
+        <p>These are not separate concepts that share a word. They are the <em>same concept</em>&mdash;the extension of trust across time and space&mdash;manifesting in different contexts.</p>
+
+        <div class="callout">
+          <p>Every use of &ldquo;credit&rdquo; encodes this structure: <em>I believe you will deliver. I extend to you a portion of my confidence in advance of your delivery.</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 3. THE END OF WORK ====== -->
+    <section class="doc-section" id="end-of-work">
+      <div class="reveal">
+        <h2>The End of Work</h2>
+
+        <p>In 1930, John Maynard Keynes predicted a fifteen-hour workweek by 2030. He was right about the wealth creation&mdash;GDP per capita in Western countries has grown six to eight times since. He was wrong about the reduction in work.</p>
+
+        <p>David Graeber&rsquo;s answer: we invented bullshit jobs rather than accept leisure. Graeber estimated that approximately 40% of workers believe their jobs are pointless. &ldquo;There is something very odd,&rdquo; he wrote, &ldquo;about a civilization that makes work so central to people&rsquo;s moral self-worth.&rdquo;</p>
+
+        <p>Now AI is finishing what automation started. But this time it is different: previous waves of automation replaced muscles. This replaces minds. <a href="https://www.mckinsey.com/mgi/our-research/agents-robots-and-us-skill-partnerships-in-the-age-of-ai" target="_blank" rel="noopener noreferrer">McKinsey estimates</a> that current AI technologies could automate activities accounting for 57% of U.S. work hours. The <a href="https://www.anthropic.com/research/economic-index-primitives" target="_blank" rel="noopener noreferrer">Anthropic Economic Index</a> found AI being used for at least a quarter of tasks in 49% of the occupations sampled.</p>
+
+        <p>The question is no longer <em>whether</em> post-labor arrives. It is what replaces labor as the basis of value, identity, and economic coordination.</p>
+      </div>
+    </section>
+
+    <!-- ====== 4. THE AGENTIC ECONOMY ====== -->
+    <section class="doc-section" id="agentic-economy">
+      <div class="reveal">
+        <h2>The Agentic Economy</h2>
+
+        <p>Agents are no longer chatbots. They code, research, trade, manage workflows, hire contractors. <a href="https://thestrategystack.substack.com/p/agentic-ai-and-the-coming-economic" target="_blank" rel="noopener noreferrer">OpenAI&rsquo;s Operator</a> achieves 87% success on complex browser tasks. <a href="https://www.forbes.com/sites/ronschmelzer/2026/02/26/anthropic-buys-vercept-to-build-ai-that-can-use-computers-like-people/" target="_blank" rel="noopener noreferrer">Anthropic acquired Vercept</a> to build autonomous digital workers. Mastercard, Visa, PayPal, and Stripe have all launched <a href="https://www.everestgrp.com/blogs/agentic-payments-reinventing-payments-for-the-ai-era-blog/" target="_blank" rel="noopener noreferrer">agent payment infrastructure</a>.</p>
+
+        <p>The most telling development: <a href="https://www.forbes.com/sites/ronschmelzer/2026/02/05/when-ai-agents-start-hiring-humans-rentahumanai-turns-the-tables/" target="_blank" rel="noopener noreferrer">Rentahuman.ai</a>, where AI agents hire humans as on-demand physical actuators. Tens of thousands registered within days. &ldquo;The physical realm has become programmable through delegation.&rdquo;</p>
+
+        <p>When agents produce most economic value, traditional allocation mechanisms collapse:</p>
+
+        <ul class="data-list">
+          <li><strong>Wages</strong> (payment for labor time) become irrelevant to most transactions.</li>
+          <li><strong>Prices</strong> remain but are set by agents, not markets.</li>
+          <li><strong>Profit</strong> flows to capital owners&mdash;concentrating everything.</li>
+        </ul>
+
+        <p>What remains scarce in a world of agentic abundance? Attention. Trust. Reputation. Attribution. All facets of the same concept: <em>credit</em>.</p>
+      </div>
+    </section>
+
+    <!-- ====== 5. CREDIT AS VALUE ====== -->
+    <section class="doc-section" id="credit-as-value">
+      <div class="reveal">
+        <h2>Credit as Value</h2>
+        <p class="subtitle">If not labour, then what?</p>
+
+        <p>If AI produces most goods and services, on what basis do humans receive income? On what basis do agents receive resources? On what basis are disputes about ownership and attribution resolved?</p>
+
+        <p>Credit&mdash;in all its senses&mdash;fills the vacuum left by labor.</p>
+
+        <p>Reputation is labor theory <em>de-temporalized</em>: instead of &ldquo;how many hours did you work?&rdquo; the question becomes &ldquo;what is the accumulated quality and reliability of your contributions over time?&rdquo; It is trustworthiness made quantifiable.</p>
+
+        <p>The Renaissance Florentines understood this. <a href="https://www.cambridge.org/core/journals/european-journal-of-sociology-archives-europeennes-de-sociologie/article/circulation-of-interpersonal-credit-in-renaissance-florence/BDA86E21F337BF878095E738DDEBA604" target="_blank" rel="noopener noreferrer">Research from the European Journal of Sociology</a> shows the most extreme credit leverage in fifteenth-century Florence was extended entirely on the basis of name, reputation, and network connections&mdash;not material assets. The Medici bank branch in Rome started with zero capital. The Medici <em>name</em> was the capital.</p>
+
+        <p>The <a href="https://kclpure.kcl.ac.uk/portal/files/5927618/coverHawala_JPE_Schaeffer_Final_Copy.pdf" target="_blank" rel="noopener noreferrer">hawala system</a>&mdash;operating since the eleventh century&mdash;moves money without bookkeeping, legal recourse, or physical currency. Its only infrastructure is the web of mutually observed reputations. Its only enforcement: the threat of exclusion.</p>
+
+        <blockquote>
+          <p>&ldquo;Credit has been compared to the dark matter that makes up some eighty-five percent of the universe but cannot be directly observed.&rdquo;</p>
+          <span class="attribution">&mdash; <a href="https://direct.mit.edu/jinh/article/52/4/513/109880/Credit-and-Poverty-in-Early-Modern-Venice" target="_blank" rel="noopener noreferrer">Journal of Interdisciplinary History</a>, MIT Press</span>
+        </blockquote>
+
+        <p>Credit is fundamentally temporal: it transfers value from the future to the present, premised on trust. This is why it generalizes more elegantly to the agentic economy than labor does. Agents don&rsquo;t have labor hours, but they can accumulate track records and establish creditworthiness. The transition from labor-based to credit-based value is a transition from backward-looking to forward-looking economic coordination.</p>
+      </div>
+    </section>
+
+    <!-- ====== 6. THE ATTRIBUTION PROBLEM ====== -->
+    <section class="doc-section" id="attribution-problem">
+      <div class="reveal">
+        <h2>The Attribution Problem</h2>
+
+        <p>When an AI agent produces something of value, who gets credit?</p>
+
+        <div class="claim-list">
+          <div class="claim-item">
+            <h4>The Developer&rsquo;s Claim</h4>
+            <p>The company that built the model owns the output. Risk: all value flows to a handful of AI labs.</p>
+          </div>
+
+          <div class="claim-item">
+            <h4>The User&rsquo;s Claim</h4>
+            <p>The person who prompted and directed the AI is the author. Legally uncertain&mdash;the U.S. Copyright Office <a href="https://designsensory.com/insights/ai-ownership/" target="_blank" rel="noopener noreferrer">will refuse to register</a> works solely generated by AI.</p>
+          </div>
+
+          <div class="claim-item">
+            <h4>The Data Claim</h4>
+            <p>The writers, artists, coders whose work trained the model deserve recognition. The accumulated <em>general intellect</em>&mdash;centuries of human knowledge&mdash;is the real substrate.</p>
+          </div>
+
+          <div class="claim-item">
+            <h4>The Agent Itself</h4>
+            <p>As AI systems develop goal-representations, questions of agent interests become non-trivial. <a href="https://dl.acm.org/doi/full/10.1145/3706598.3713522" target="_blank" rel="noopener noreferrer">Research published in ACM</a> found that compared to a human partner, AI is systematically assigned less credit for equivalent contributions.</p>
+          </div>
+        </div>
+
+        <p>The copyright system&mdash;designed for industrial-age solitary authorship&mdash;has no answer. The AI economy generates billions daily under a legal void.</p>
+
+        <p>Whatever system resolves the attribution question becomes the <em>de facto</em> value allocation mechanism. The new operating system of economic life.</p>
+      </div>
+    </section>
+
+    <!-- ====== 7. THE CARTELS OF TRUST ====== -->
+    <section class="doc-section" id="cartels-of-trust">
+      <div class="reveal">
+        <h2>The Cartels of Trust</h2>
+
+        <p>A cartel controls supply. Credibility has always been controlled by cartels&mdash;we just don&rsquo;t call them that.</p>
+
+        <div class="cartel-entry">
+          <h4>FICO</h4>
+          <p>Ninety percent market share in credit scoring. <a href="https://thehill.com/opinion/finance/5376119-fico-credit-score-monopoly/" target="_blank" rel="noopener noreferrer">500% price increases</a> in two years. Its power was granted by the federal government&mdash;Fannie Mae and Freddie Mac require FICO scores for mortgage eligibility. The template: first it becomes the standard, then mandatory, then impossible to displace.</p>
+        </div>
+
+        <div class="cartel-entry">
+          <h4>Universities</h4>
+          <p>The credential cartel. A degree is a trust token: the university vouches for the graduate. <a href="https://www.insidehighered.com/opinion/columns/higher-ed-gamma/2024/03/12/university-monopoly-credentialing-training-ecosystem" target="_blank" rel="noopener noreferrer">The status of top institutions</a> derives not from pedagogy but from signaling value, alumni networks, and research importance. You don&rsquo;t attend Harvard for what you learn; you attend for the signal and the network.</p>
+        </div>
+
+        <div class="cartel-entry">
+          <h4>Platforms</h4>
+          <p>Meta, Google, X control the supply of public attention and reputation. <a href="https://www.law.georgetown.edu/denny-center/blog/architecture-of-control/" target="_blank" rel="noopener noreferrer">They extract &ldquo;behavioral rents&rdquo;</a>&mdash;manipulating user behavior, suppressing rival entry, and dominating flows of visibility. They don&rsquo;t just host reputations&mdash;they create them through algorithmic amplification. The platform grants credibility and can revoke it.</p>
+        </div>
+
+        <div class="cartel-entry">
+          <h4>Ratings</h4>
+          <p>Uber, Airbnb, Amazon. Users generate trust data through their labor, and the platform owns it. Your 500 Airbnb reviews disappear if you leave the platform. Reputational feudalism: the serfs create the value, the lord retains the ledger.</p>
+        </div>
+
+        <div class="callout">
+          <p>The trust infrastructure of the post-labor economy will be built by someone. It will not emerge neutrally. The question is not whether there will be a cartel but <em>which cartel, on whose behalf, and by what principles.</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 8. THE POSITION ====== -->
+    <section class="doc-section" id="the-position">
+      <div class="reveal">
+        <h2>The Position</h2>
+
+        <h3>Principles</h3>
+
+        <p>If credit is the fundamental unit of value in a post-labor economy, then its infrastructure must not repeat the failures of the systems it replaces.</p>
+
+        <ul class="data-list">
+          <li><strong>Credit must be portable.</strong> Your reputation cannot be held hostage by the platform that witnessed it. A track record accumulated on one network must be legible on any other.</li>
+          <li><strong>Credit must be bilateral.</strong> Agents and humans participate in the same economy. A system that scores one and ignores the other is already obsolete.</li>
+          <li><strong>Attribution must be compositional.</strong> When value is produced by chains of actors&mdash;human, artificial, and hybrid&mdash;credit must flow proportionally through the full chain, not pool at the endpoints.</li>
+          <li><strong>The ledger must be open.</strong> The methodology by which trust is calculated cannot be proprietary. Opacity is how FICO extracts rents. Transparency is how legitimacy is maintained.</li>
+        </ul>
+
+        <h3>Conviction</h3>
+
+        <p>The entity that defines how credit works in an agentic economy will shape that economy more profoundly than any government, platform, or protocol.</p>
+
+        <p>The trust infrastructure of the next century will not be designed by the institutions that failed to steward the last one. It will not emerge from platforms that treat reputation as proprietary exhaust. It will not be gifted by governments that still measure economic health in employment figures.</p>
+
+        <p>It will be built by those who see the transition clearly, and move before it becomes obvious.</p>
+
+        <h3>The Network</h3>
+
+        <p>Credit Cartel is not a company. It is a network&mdash;a cartel, if you prefer the honest word&mdash;of people who understand that the question of <em>who gets credit</em> is the defining question of the next economy.</p>
+
+        <p>If you have spent time thinking about reputation systems, agent identity, post-labor economics, trust infrastructure, or the attribution problem&mdash;and if you believe the answer will not come from incumbents&mdash;we are interested in hearing from you.</p>
+
+        <p class="apart">The cartel is forming. The question is whether you are inside it or subject to it.</p>
+      </div>
+    </section>
+
+    <!-- ====== 9. CONTACT ====== -->
+    <section class="doc-section" id="contact">
+      <div class="reveal">
+        <h2>Contact</h2>
+        <p style="margin-top: 20px;">Inquiries: <a href="mailto:mail@creditcartel.com" class="contact-link">mail@creditcartel.com</a></p>
+        <p class="contact-closing">We are paying attention.</p>
+      </div>
+    </section>
+
+  </div><!-- .content-area -->
+</main>
+
+<!-- ========================================
+     FOOTER
+     ======================================== -->
+<footer class="footer">
+  <div class="footer-text">República de Panamá</div>
+</footer>
+
+<!-- ========================================
+     JAVASCRIPT
+     ======================================== -->
 <script>
-    function openPrompt() {
-        document.getElementById('overlay').classList.add('active');
-        setTimeout(() => document.getElementById('passInput').focus(), 100);
+(function() {
+  'use strict';
+
+  // ---- DOM refs ----
+  var sidebar = document.getElementById('sidebar');
+  var hamburger = document.getElementById('hamburger');
+  var overlay = document.getElementById('sidebar-overlay');
+  var sidebarLinks = document.querySelectorAll('.sidebar-link');
+  var sections = document.querySelectorAll('.doc-section');
+  var reveals = document.querySelectorAll('.reveal');
+
+  // ---- Mobile sidebar toggle ----
+  function toggleSidebar() {
+    var isOpen = sidebar.classList.contains('open');
+    sidebar.classList.toggle('open');
+    hamburger.classList.toggle('active');
+    overlay.classList.toggle('visible');
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    hamburger.classList.remove('active');
+    overlay.classList.remove('visible');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', toggleSidebar);
+  overlay.addEventListener('click', closeSidebar);
+
+  // ---- Sidebar link click (close on mobile) ----
+  sidebarLinks.forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (window.innerWidth <= 900) {
+        closeSidebar();
+      }
+    });
+  });
+
+  // ---- Active section highlighting (scroll spy) ----
+  var scrollSpyThrottled = throttle(function() {
+    var scrollPos = window.scrollY + 120;
+    var currentSection = '';
+
+    sections.forEach(function(section) {
+      var top = section.offsetTop;
+      var bottom = top + section.offsetHeight;
+      if (scrollPos >= top && scrollPos < bottom) {
+        currentSection = section.getAttribute('id');
+      }
+    });
+
+    // Fallback: if near bottom of page, highlight last section
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 50) {
+      currentSection = sections[sections.length - 1].getAttribute('id');
     }
 
-    function closePrompt() {
-        document.getElementById('overlay').classList.remove('active');
-        document.getElementById('passInput').value = '';
-        document.getElementById('errorMsg').classList.remove('show');
-    }
+    sidebarLinks.forEach(function(link) {
+      if (link.getAttribute('data-section') === currentSection) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }, 80);
 
-    function checkPass() {
-        const val = document.getElementById('passInput').value;
-        if (val === 'Ballena$') {
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('contactReveal').classList.add('active');
-            document.getElementById('passInput').value = '';
-        } else {
-            document.getElementById('errorMsg').classList.add('show');
-            document.getElementById('passInput').value = '';
+  window.addEventListener('scroll', scrollSpyThrottled, { passive: true });
+
+  // ---- Reveal on scroll (IntersectionObserver) ----
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
         }
-    }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
 
-    function closeContact() {
-        document.getElementById('contactReveal').classList.remove('active');
+    reveals.forEach(function(el) {
+      observer.observe(el);
+    });
+  } else {
+    reveals.forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }
+
+  // ---- Hash navigation on load ----
+  if (window.location.hash) {
+    var target = document.querySelector(window.location.hash);
+    if (target) {
+      var targetReveal = target.querySelector('.reveal');
+      if (targetReveal) {
+        targetReveal.classList.add('visible');
+      }
+      setTimeout(function() {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
+  }
+
+  // ---- Reveal sections already in viewport on load ----
+  setTimeout(function() {
+    reveals.forEach(function(el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add('visible');
+      }
+    });
+  }, 50);
+
+  // ---- Throttle utility ----
+  function throttle(fn, wait) {
+    var last = 0;
+    return function() {
+      var now = Date.now();
+      if (now - last >= wait) {
+        last = now;
+        fn.apply(this, arguments);
+      }
+    };
+  }
+
+  // ---- Resize handler: close sidebar on desktop ----
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 900) {
+      closeSidebar();
+    }
+  });
+
+})();
 </script>
-
-
 </body>
 </html>
